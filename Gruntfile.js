@@ -45,7 +45,8 @@ module.exports = function(grunt) {
     done();
   });
 
-  grunt.registerTask('default', 'mochaTest');
+  grunt.registerTask('test', 'mochaTest');
+  grunt.registerTask('default', 'coverage');
   grunt.registerTask('coverage', ['mocha_istanbul:coverage']);
 
 };

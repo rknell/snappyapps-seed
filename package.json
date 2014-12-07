@@ -1,9 +1,10 @@
 {
   "name": "snappyapps-seed",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node app.js",
+    "test": "grunt test"
   },
   "dependencies": {
     "body-parser": "~1.8.1",
@@ -33,5 +34,28 @@
     "mocha": "^2.0.1",
     "mongoose-mock": "^0.4.0",
     "rewire": "^2.1.3"
-  }
+  },
+  "description": "--- *Build a rapid API by simply adding files. Uses Express and Mongoose.*",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rknell/snappyapps-seed.git"
+  },
+  "keywords": [
+    "rest",
+    "api",
+    "mongoose",
+    "web",
+    "framework",
+    "express"
+  ],
+  "author": "Ryan Knell / SnappyApps",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/rknell/snappyapps-seed/issues"
+  },
+  "homepage": "https://github.com/rknell/snappyapps-seed"
 }
