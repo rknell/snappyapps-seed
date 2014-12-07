@@ -1,0 +1,176 @@
+
+[0m[0m
+[0m  loader[0m
+[0m    __loadModels[0m
+[ { middleware: 
+     { find: [Object],
+       create: [],
+       update: [],
+       remove: [],
+       findById: [],
+       search: [Object] },
+    model: 
+     { [Function: model]
+       base: [Object],
+       modelName: 'Cat',
+       model: [Function: model],
+       db: [Object],
+       discriminators: undefined,
+       schema: [Object],
+       options: undefined,
+       collection: [Object] },
+    __name: 'Cat' },
+  { middleware: 
+     { find: [],
+       create: [],
+       update: [],
+       remove: [],
+       findById: [],
+       search: [] },
+    model: 
+     { [Function: model]
+       base: [Object],
+       modelName: 'Dog',
+       model: [Function: model],
+       db: [Object],
+       discriminators: undefined,
+       schema: [Object],
+       options: undefined,
+       collection: [Object] },
+    __name: 'Dog' } ]
+[2K[0G    [32m  ✓[0m[90m should load the models [0m
+[0m    loadApi[0m
+post      /Cat/search
+get       /Cat
+post      /Cat
+put       /Cat
+get       /Cat/:id
+delete    /Cat/:id
+post      /Dog/search
+get       /Dog
+post      /Dog
+put       /Dog
+get       /Dog/:id
+delete    /Dog/:id
+get       /Cat/find
+get       /Squirrel/collectNuts
+{ [Function: router]
+  params: {},
+  _params: [],
+  caseSensitive: undefined,
+  mergeParams: undefined,
+  strict: undefined,
+  stack: 
+   [ { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Cat\/search\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Cat\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Cat\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Cat\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [Object],
+       regexp: /^\/Cat\/(?:([^\/]+?))\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [Object],
+       regexp: /^\/Cat\/(?:([^\/]+?))\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Dog\/search\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Dog\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Dog\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Dog\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [Object],
+       regexp: /^\/Dog\/(?:([^\/]+?))\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [Object],
+       regexp: /^\/Dog\/(?:([^\/]+?))\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Cat\/find\/?$/i,
+       route: [Object] },
+     { handle: [Function],
+       name: '<anonymous>',
+       params: undefined,
+       path: undefined,
+       keys: [],
+       regexp: /^\/Squirrel\/collectNuts\/?$/i,
+       route: [Object] } ] }
+[2K[0G    [32m  ✓[0m[90m should load the entire api [0m
+[0m    __loadRoutes[0m
+[ { routes: [ [Object], [Object] ],
+    __find: [Function: find],
+    __name: 'Cat' },
+  { routes: [ [Object] ],
+    __collectNuts: [Function: collectNuts],
+    __name: 'Squirrel' } ]
+[2K[0G    [32m  ✓[0m[90m should load the routes [0m
+[0m    __space[0m
+[2K[0G    [32m  ✓[0m[90m should return a space of 5 [0m
+
+
+[92m [0m[32m 4 passing[0m[90m (68ms)[0m
+

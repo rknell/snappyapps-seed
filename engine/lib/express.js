@@ -1,14 +1,28 @@
+/**
+ * This is just essentially the output you get when you generate an express app using the CLI tool
+ *
+ * It has been modified a little to work with the system - most notably breaking down the workflow into two functions
+ * so other routes can be injected.
+ */
+
+
+// Express Dependencies
+// --------------------
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session')
+var session = require('express-session');
+var helmet = require('helmet');
 
+// Initialise express
+// ------------------
 var app = express();
 
-//app.use(favicon(path.join(__dirname, "..", "..", "www", "public", "favicon.ico")));
+// Setup default middleware
+// ------------------------
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -18,65 +32,59 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+app.use(helmet());
 
-function listen(port) {
-  try {
-    // view engine setup
-    var viewPath = path.join(__dirname, "..", "..", "www", 'views');
-    app.set('views', viewPath);
-    app.set('view engine', 'jade');
+/**
+ * This function is called after the rest of the loader functions have been initialised
+ * It is very important to ensure that all express routes have been loaded before calling this function
+ * @param port
+ * @param dontListen - Used for testing with supertest
+ */
+function listen(port, dontListen, production) {
+  // Setup the view engine
+  // ---------------------
+  var viewPath = path.join(__dirname, "..", "..", "www", 'views');
+  app.set('views', viewPath);
+  app.set('view engine', 'jade');
 
-    // catch 404 and forward to error handler
-    app.use(function (req, res, next) {
-      var err = new Error('Not Found');
-      err.status = 404;
-      next(err);
-    });
+  // Setup the path to the static files
+  // ----------------------------------
+  app.use(express.static(path.join(__dirname, "..", "..", "www", "public")));
 
+  // Fallover to a 404 if no other routes are matched
+  // ------------------------------------------------
+  app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
-    // error handlers
+  // Error Handlers
+  // --------------
 
-    // development error handler
-    // will print stacktrace
-    console.log("Current Environment: ", app.get('env'));
-    if (app.get('env') === 'development') {
-      app.use(function (err, req, res, next) {
-        if (req.get('content-type') == "application/json") {
-          var errOutput = {
-            message: err.message,
-            stack: err.stack
-          }
-          res.status(err.status || 500).json(errOutput)
-        } else {
-          res.status(err.status || 500);
-          res.render('error', {
-            message: err.message,
-            error: err
-          });
-        }
-      });
+  //Development error handler.
+  //Will print a stacktrace
+  console.log("Current Environment: ", app.get('env'));
+  app.use(function (err, req, res, next) {
+    if (req.get('content-type') == "application/json") {
+      var errOutput = {
+        message: err.message,
+        stack: err.stack
+      }
+      res.status(err.status).json(errOutput)
     } else {
-      // production error handler
-      // no stacktraces leaked to user
-      app.use(function (err, req, res, next) {
-        if (req.get('content-type') == "application/json") {
-          res.status(500).json(err.message);
-        } else {
-          res.status(err.status || 500);
-          res.render('error', {
-            message: err.message,
-            error: {message: "Debugging disabled in production, switch to development for more information"}
-          });
-        }
+      res.status(err.status);
+      res.render('error', {
+        message: err.message,
+        error: err
       });
     }
+  });
 
-    var server = app.listen(process.env.PORT || port, function () {
-      console.log('Listening on port %d', server.address().port);
-    });
-  } catch (e) {
-    console.log(e);
-  }
+  var server = app.listen(process.env.PORT || port, function () {
+    console.log('Listening on port %d', server.address().port);
+  });
+
 }
 
 var expressApp = {
