@@ -7,7 +7,7 @@
  * This is more complex example, to see a simple example check the Dogs.js file.
  */
 
-var SimpleTimestamps = require('mongoose-SimpleTimestamps').SimpleTimestamps;
+var SimpleTimestamps = require('mongoose-simpletimestamps').SimpleTimestamps;
 var middleware = require('../middleware');
 var mongoose = require('mongoose');
 
