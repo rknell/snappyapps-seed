@@ -1,5 +1,6 @@
 #SnappyJS Framework#
 ---
+[![Build Status](https://api.travis-ci.org/rknell/snappyapps-seed.png?branch=master)](https://api.travis-ci.org/rknell/snappyapps-seed)
 *Build a rapid API by simply adding files. Uses Express and Mongoose.*
 
 If you have ever used SailsJS before, then you will be right at home. Simply add models and route files to the appropriate folder and the app will automatically scaffold and setup express endpoints for you.
