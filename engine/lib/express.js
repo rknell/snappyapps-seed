@@ -16,6 +16,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var helmet = require('helmet');
+var cors = require('cors');
 
 // Initialise express
 // ------------------
@@ -33,6 +34,7 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use(helmet());
+app.use(cors());
 
 /**
  * This function is called after the rest of the loader functions have been initialised
