@@ -6,6 +6,7 @@ var q = require('q');
 var router = require('express').Router();
 var ObjectId = require('mongoose').Types.ObjectId;
 var defaultActions = require('./defaultActions');
+var SimpleTimestamps = require('mongoose-simpletimestamps').SimpleTimestamps;
 
 // Load variables
 // --------------
@@ -55,6 +56,20 @@ function loadModels() {
   }, function (modules) {
 
     modules.forEach(function (model) {
+
+      if(model.schema){
+        if(model.model.modelName !== "Structure"){
+          model.schema.plugin(function (schema) {
+            schema.add({
+              structure: {type: engine.mongoose.Schema.Types.ObjectId, ref: 'Structure', required: true}
+            });
+          });
+        }
+        model.schema.plugin(SimpleTimestamps);
+      } else {
+        console.error("Model", model, "does not have a schema object exposed");
+        process.exit();
+      }
 
       var apiPath = "/" + model.model.modelName;
 
@@ -191,16 +206,56 @@ function loadRoutes() {
 
 /**
  * Finalise endpoints and setup express
+ * This is a pretty complex method, first it registers all endpoints that do not have params,
+ * then it gets the endpoint that is the most complex (most slashes) and registers them in order
+ * from most complex to least complex - to make sure that you dont get a low level endpoint
+ * trying to handle and id when it shouldn't be invoked
  * @returns {*}
  */
-function actionRunLast() {
+function actionRunLast(dontSkip) {
   Object.keys(register).forEach(function (apiPath) {
-    Object.keys(register[apiPath]).forEach(function (method) {
-      var fn = register[apiPath][method];
-      console.log(method, space(8 - method.length), apiPath);
-      router.route(apiPath)[method](fn)
-    });
+    if(!apiPath.match(/\:/)){
+      Object.keys(register[apiPath]).forEach(function (method) {
+        var fn = register[apiPath][method];
+        console.log(method, space(8 - method.length), apiPath);
+        router.route(apiPath)[method](fn)
+      });
+    }
+
   });
+
+  var maxSlash = 0;
+  //Loop over all of the api paths and count the number of slashes
+  Object.keys(register).forEach(function (apiPath) {
+    var isId = apiPath.match(/\:/)
+    if(isId) {
+      var slashes = apiPath.match(/\//g).length
+      register[apiPath].slashCount = slashes;
+      //apiPath.slashCount = slashes;
+      if(register[apiPath].slashCount > maxSlash) maxSlash = register[apiPath].slashCount;
+    }
+  });
+
+  //Register the item with the most slashes first to last
+  function registerIds(){
+    Object.keys(register).forEach(function (apiPath) {
+      if(register[apiPath].slashCount === maxSlash) {
+        Object.keys(register[apiPath]).forEach(function (method) {
+          if(method !== "slashCount"){
+            var fn = register[apiPath][method];
+            console.log(method, space(8 - method.length), apiPath);
+            router.route(apiPath)[method](fn)
+          }
+        });
+      }
+    });
+    if(maxSlash > 0){
+      maxSlash--;
+      registerIds();
+    }
+  }
+
+  registerIds();
 
   return q(router);
 }
@@ -248,7 +303,6 @@ module.exports = {
   __loadRoutes: loadRoutes,
   __space: space,
   //__getFileList: getFileList,
-  __loadModules: loadModules,
   __actionRunLast: actionRunLast,
   __loadModules: loadModules,
   addToRegister: addToRegister

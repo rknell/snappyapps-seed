@@ -5,10 +5,10 @@ in the module.exports call
 
 var mongoose = require('mongoose');
 
-var schema = {
+var schema = new mongoose.Schema({
   name: String,
   age: Number
-};
+});
 
 module.exports = {
   middleware: {
@@ -19,5 +19,6 @@ module.exports = {
     findById: [],
     search: []
   },
-  model: mongoose.model('Dog', schema)
+  model: mongoose.model('Dog', schema),
+  schema: schema
 };

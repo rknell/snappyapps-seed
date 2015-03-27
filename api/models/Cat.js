@@ -7,7 +7,7 @@
  * This is more complex example, to see a simple example check the Dogs.js file.
  */
 
-var SimpleTimestamps = require('mongoose-simpletimestamps').SimpleTimestamps;
+
 var middleware = require('../middleware');
 var mongoose = require('mongoose');
 
@@ -22,12 +22,6 @@ var schema = new mongoose.Schema({
   ]
 });
 
-//Plugins
-//-------------
-schema.plugin(SimpleTimestamps);
-
-//Object that is returned
-//-------------
 module.exports = {
   middleware: {
     find: [middleware.enoughNuts],
@@ -37,5 +31,6 @@ module.exports = {
     findById: [middleware.emptyMiddleware],
     search: [middleware.isLoggedIn]
   },
-  model: mongoose.model('Cat', schema)
+  model: mongoose.model('Cat', schema),
+  schema: schema
 }

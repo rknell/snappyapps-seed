@@ -1,0 +1,65 @@
+<div class="hbox hbox-auto-xs bg-light ng-scope" style="padding-top: 50px;" ng-controller="UsersmasterCtrl"
+     ng-init="app.settings.fullHeight = true;">
+    <!-- column -->
+    <div class="col">
+        <div class="vbox">
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="wrapper-md col-lg-10">
+                            <div class="col-lg-4 col-sm-6" ng-repeat="item in users">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="clearfix text-center m-t">
+                                            <div class="inline">
+                                                <div class="thumb-xl">
+                                                    <img src="img/a8.jpg" class="img-circle" alt="...">
+                                                </div>
+                                                <div class="h4 m-t m-b-xs">{{item.name}}</div>
+                                                <small class="text-muted m-b">{{item.position}}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <footer class="panel-footer bg-info text-center no-padder">
+                                        <button class="btn-info btn-block btn" ng-click="edit(item)">Edit</button>
+                                    </footer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /column -->
+
+    <!-- column -->
+    <div class="col w-md lter b-l">
+        <div class="vbox">
+            <div class="wrapper b-b b-light">
+                <div class="font-thin h4">Actions</div>
+                <small class="text-muted">User management actions</small>
+            </div>
+            <div class="row-row">
+                <div class="cell">
+                    <div class="cell-inner">
+                        <div class="wrapper-md">
+                            <form>
+                                <h4>Invite User</h4>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" placeholder="Email Address" class="input-sm form-control"
+                                           ng-model="inviteEmail">
+                                </div>
+                                <div class="m-t-md m-b-md">
+                                    <button class="btn btn-sm btn-primary" ng-click="sendInvite()">Send Invite</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /column -->
+</div>

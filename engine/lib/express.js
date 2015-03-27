@@ -15,26 +15,38 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var helmet = require('helmet');
 var cors = require('cors');
+var compression = require('compression');
+
+
 
 // Initialise express
 // ------------------
 var app = express();
 
+var http = require('http').Server(app);
+io = require('socket.io')(http);
+
 // Setup default middleware
 // ------------------------
 app.use(logger('dev'));
+
+app.use(session({
+  secret: '1234890sdlkjfu02',
+  resave: true,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: { maxAge: 6000000 },
+  store: new MongoStore({url: process.env.DB_URI})
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(session({
-  secret: '1234890sdlkjfu02',
-  resave: false,
-  saveUninitialized: true
-}));
 app.use(helmet());
 app.use(cors());
+app.use(compression());
 
 /**
  * This function is called after the rest of the loader functions have been initialised
@@ -51,7 +63,13 @@ function listen(port, dontListen, production) {
 
   // Setup the path to the static files
   // ----------------------------------
-  app.use(express.static(path.join(__dirname, "..", "..", "www", "public")));
+
+  if(process.env.NODE_ENV == "production"){
+    app.use(express.static(path.join(__dirname, "..", "..", "www")));
+  } else {
+    app.use(express.static(path.join(__dirname, "..", "..", "www")));
+  }
+
 
   // Fallover to a 404 if no other routes are matched
   // ------------------------------------------------
@@ -83,8 +101,17 @@ function listen(port, dontListen, production) {
     }
   });
 
-  var server = app.listen(process.env.PORT || port, function () {
-    console.log('Listening on port %d', server.address().port);
+
+  //var app = require('express')();
+  io.on('connection', function(socket){
+    socket.emit('welcome', { message: 'Socket.IO connected' });
+    socket.on('send', function (data) {
+      io.sockets.emit('message', data);
+    });
+  });
+
+  http.listen(process.env.PORT || port, function(){
+    console.log('Listening on port %d', http.address().port);
   });
 
 }

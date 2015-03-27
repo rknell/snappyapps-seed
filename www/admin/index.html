@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="admin">
+<head>
+    <title>Snappy Apps Admin Seed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" type="text/css"/>
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css" type="text/css"/>
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="bower_components/simple-line-icons/css/simple-line-icons.css" type="text/css"/>
+    <link rel="stylesheet" href="bower_components/angularjs-toaster/toaster.css" type="text/css"/>
+
+    <!--<link href="app.less" type="text/css" rel="stylesheet/less">-->
+    <link href="app.css" type="text/css" rel="stylesheet">
+</head>
+<body ng-controller="AppCtrl">
+<toaster-container></toaster-container>
+<div class="app" id="app"
+     ng-class="{'app-header-fixed':app.settings.headerFixed, 'app-aside-fixed':app.settings.asideFixed, 'app-aside-folded':app.settings.asideFolded, 'app-aside-dock':app.settings.asideDock, 'container':app.settings.container, 'full-height': app.settings.fullHeight}"
+     ui-view></div>
+
+
+<!-- Livereload script for development only (stripped during dist build) -->
+<script src="http://localhost:35729/livereload.js" data-concat="false"></script>
+
+<!-- JS from Bower Components -->
+<script src="bower_components/less.js/dist/less-1.6.2.js" data-concat="false"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="bower_components/moment/moment.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+<script src="bower_components/ngstorage/ngStorage.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.4.js" data-concat="false" data-remove="false"></script>
+<script src="bower_components/angularjs-toaster/toaster.js" data-concat="false" data-remove="false"></script>
+<!-- Add New Bower Component JS Above -->
+
+
+<!-- Main App JS -->
+<script src="app.js"></script>
+<script src="directive/toolbar/toolbar.js"></script>
+<script src="partial/home/home.js"></script>
+<script src="directive/aside/aside.js"></script>
+<script src="partial/App/App.js"></script>
+<script src="directive/asideNav/asideNav.js"></script>
+<script src="service/app.js"></script>
+<script src="directive/navItem/navItem.js"></script>
+<script src="directive/pageTitle/pageTitle.js"></script>
+<script src="directive/dataPanel/dataPanel.js"></script>
+<script src="partial/signIn/signIn.js"></script>
+<script src="partial/signUp/signUp.js"></script>
+<script src="service/authentication.js"></script>
+<script src="partial/usersMaster/usersMaster.js"></script>
+<script src="partial/userDetail/userDetail.js"></script>
+<script src="partial/forgotPassword/forgotPassword.js"></script>
+<script src="partial/resetPassword/resetPassword.js"></script>
+<script src="partial/structureMaster/structureMaster.js"></script>
+<!-- Add New Component JS Above -->
+
+<!--<script src="directive/navItem/navItem.html" type="text/ng-template" id="directive/navItem/navItem.html"></script>-->
+
+</body>
+</html>

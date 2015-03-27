@@ -1,0 +1,39 @@
+//Variables
+@aside-width: 200px;
+
+
+//@import "bower_components/bootstrap/less/bootstrap.less";
+@import "template-less/app.less";
+//@import "bower_components/bootstrap/less/theme.less";
+@import "bower_components/font-awesome/less/font-awesome.less";
+@fa-font-path: "bower_components/font-awesome/fonts";
+
+/* Component LESS */
+@import "directive/toolbar/toolbar.less";
+@import "partial/home/home.less";
+@import "directive/aside/aside.less";
+@import "partial/App/App.less";
+@import "directive/asideNav/asideNav.less";
+@import "directive/navItem/navItem.less";
+@import "directive/pageTitle/pageTitle.less";
+@import "directive/dataPanel/dataPanel.less";
+@import "partial/signIn/signIn.less";
+@import "partial/signUp/signUp.less";
+@import "partial/usersMaster/usersMaster.less";
+@import "partial/userDetail/userDetail.less";
+@import "partial/forgotPassword/forgotPassword.less";
+@import "partial/resetPassword/resetPassword.less";
+@import "partial/structureMaster/structureMaster.less";
+/* Add Component LESS Above */
+
+/* Required for Angular UI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.full-height {
+    height: 100%;
+    padding: 0;
+}
+
+.no-padding {
+    padding: 0;
+}

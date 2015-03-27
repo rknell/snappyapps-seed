@@ -1,4 +1,7 @@
-var ObjectId = require('mongoose').Types.ObjectId;
+ObjectId = require('mongoose').Types.ObjectId;
+
+var Structure = require('../../api/models/Structure');
+var q = require('q');
 
 /**
  * Default find all function
@@ -7,10 +10,14 @@ var ObjectId = require('mongoose').Types.ObjectId;
  * @param model
  */
 function findAll(req, res, model) {
-  model
-    .find({})
-    .exec(function (err, docs) {
-      res.json(docs);
+  getStructureQuery({}, req.session.structureId)
+    .then(function (query) {
+      model
+        .find(query)
+        .exec(function (err, docs) {
+          if (err) res.status(500).json(err);
+          else res.json(docs);
+        })
     })
 }
 
@@ -21,12 +28,14 @@ function findAll(req, res, model) {
  * @param model
  */
 function search(req, res, model) {
-  var query = req.body;
-  model
-    .find(query)
-    .exec(function (err, docs) {
-      res.json(docs);
-    })
+  getStructureQuery(req.body).then(function (query) {
+    model
+      .find(query)
+      .exec(function (err, docs) {
+        if (err) res.status(500).json(err);
+        else res.json(docs);
+      })
+  });
 }
 
 /**
@@ -36,10 +45,19 @@ function search(req, res, model) {
  * @param model
  */
 function findById(req, res, model) {
-  model.findOne({_id: new ObjectId(req.params.id)})
-    .exec(function (err, doc) {
-      res.json(doc);
-    });
+  getStructureQuery({_id: new ObjectId(req.params.id)}).then(function (query) {
+    model.findOne(query)
+      .exec(function (err, doc) {
+        if (!doc) {
+          res.status(404).json({message: "Record not found"});
+        } else if (err) {
+          res.status(500).json(err);
+        } else {
+          res.json(doc);
+        }
+      });
+  })
+
 }
 
 /**
@@ -49,12 +67,17 @@ function findById(req, res, model) {
  * @param model
  */
 function create(req, res, model) {
-  var data = req.body;
-  console.log(req.body);
-
-  var newItem = new model(data);
-  newItem.save(function (err, doc) {
-    res.json(doc);
+  setStructureData(req.body, req.session.structureId).then(function(data){
+    if (data._id) {
+      //Update
+      update(req, res, model)
+    } else {
+      //Create
+      var newItem = new model(data);
+      newItem.save(function (err, doc) {
+        res.json(doc);
+      })
+    }
   })
 }
 
@@ -65,12 +88,15 @@ function create(req, res, model) {
  * @param model
  */
 function update(req, res, model) {
-  var data = req.body;
-  var id = new ObjectId(data._id);
-  model.findOneAndUpdate({_id: id}, data, function (err, doc) {
 
-    res.json(doc);
-  })
+  setStructureData(data, req.session.structureId).then(function(data){
+    var id = new ObjectId(data._id);
+    model.findOneAndUpdate({_id: id}, data, function (err, doc) {
+
+      res.json(doc);
+    })
+  });
+
 }
 
 /**
@@ -81,15 +107,81 @@ function update(req, res, model) {
  */
 function remove(req, res, model) {
   var id = new ObjectId(req.params.id);
-  model.findOneAndRemove({_id: id}, function (err, doc) {
-    if (!doc) {
-      res.json(404, {message: "Delete failed, record not found"});
-    } else {
-      res.json(doc);
-    }
+  getStructureQuery({_id: id}).then(function(query){
+    model.findOneAndRemove(query, function (err, doc) {
+      if (!doc) {
+        res.json(404, {message: "Delete failed, record not found"});
+      } else {
+        res.json(doc);
+      }
+    })
   })
-
 }
+
+/**
+ *
+ * @param query
+ * @param structureId
+ * @param options
+ * - dontWarn: Dont issue a warning is no structure is present, default false (issue a warning);
+ * @returns {*}
+ */
+getStructureQuery = function (query, structureId, options) {
+  var deferred = q.defer();
+
+  if(structureId){
+    var structureArray = [];
+    Structure
+      .model
+      .findById({_id: ObjectId(structureId)})
+      .exec(function (err, structure) {
+        if (!structure) {
+          deferred.reject({message: "Structure not found"});
+        } else {
+          structure.children.forEach(function (child) {
+            structureArray.push(ObjectId(child));
+          });
+          structureArray.push(ObjectId(structureId));
+          query.structure = {$in: structureArray};
+          console.log("Post structure query", query);
+          deferred.resolve(query);
+        }
+      });
+  } else {
+    if(!options.dontWarn)
+      console.warn("No structure set, and using a filtering query");
+    deferred.resolve(query);
+  }
+
+
+  return deferred.promise;
+};
+
+/**
+ *
+ * @param data
+ * @param structureId
+ * @param options
+ * - dontWarn: Dont issue a warning is no structure is present, default false (issue a warning);
+ * @returns {*}
+ */
+setStructureData = function(data, structureId, options){
+  //Handle if there is no structureId
+  var deferred = q.defer();
+  if(!structureId){
+    if(!options.dontWarn)
+      console.warn("No structure set and ");
+    Structure.model.find({name: "Primary"}).exec(function(err, doc){
+      data.structure = doc._id;
+      deferred.resolve(data);
+    })
+  } else {
+    data.structure = ObjectId(structureId);
+    deferred.resolve(structureId)
+  }
+
+  return deferred.promise;
+};
 
 module.exports = {
   findAll: findAll,
@@ -98,4 +190,4 @@ module.exports = {
   create: create,
   update: update,
   remove: remove
-}
+};

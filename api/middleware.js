@@ -12,7 +12,7 @@ function enoughNuts(req, res, next){
 }
 
 function isLoggedIn(req, res, next){
-  if(!req.session.userId) {
+  if(!req.session.user) {
     return next({status: 401, message: "Not logged in"});
   }
   next();

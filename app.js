@@ -17,7 +17,7 @@ engine.config = {
  * in the www/public directory
  */
 engine.express.app.get('/', function (req, res) {
-  res.render('index', {title: "Title"})
+  res.redirect('/admin')
 });
 
 /**

@@ -1,0 +1,133 @@
+<div class="app-header navbar">
+    <!-- navbar header -->
+    <div class="navbar-header {{app.settings.navbarHeaderColor}}">
+        <button class="pull-right visible-xs dk" ui-toggle-class="show" data-target=".navbar-collapse">
+            <i class="glyphicon glyphicon-cog"></i>
+        </button>
+        <button class="pull-right visible-xs" ui-toggle-class="off-screen" data-target=".app-aside" ui-scroll-to="app">
+            <i class="glyphicon glyphicon-align-justify"></i>
+        </button>
+        <!-- brand -->
+        <a href="#/" class="navbar-brand text-lt">
+            <i class="fa fa-circle-o-notch"></i>
+            <span class="hidden-folded m-l-xs">{{app.name}}</span>
+        </a>
+        <!-- / brand -->
+    </div>
+    <!-- / navbar header -->
+
+    <!-- navbar collapse -->
+    <div class="collapse pos-rlt navbar-collapse box-shadow {{app.settings.navbarCollapseColor}}"
+         style="height: 50px !important;">
+        <!-- buttons -->
+        <div class="nav navbar-nav hidden-xs">
+            <a href class="btn no-shadow navbar-btn" ng-click="app.settings.asideFolded = !app.settings.asideFolded">
+                <i class="fa {{app.settings.asideFolded ? 'fa-indent' : 'fa-dedent'}} fa-fw"></i>
+            </a>
+        </div>
+        <!-- / buttons -->
+
+        <!-- link and dropdown -->
+        <ul class="nav navbar-nav hidden-sm">
+            <li class="dropdown" dropdown>
+                <a href class="dropdown-toggle" dropdown-toggle>
+                    <i class="fa fa-fw fa-plus visible-xs-inline-block"></i>
+                    <span translate="header.navbar.new.NEW">New</span> <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#/app/jobs/new">Job Listing</a></li>
+                </ul>
+            </li>
+        </ul>
+        <!-- / link and dropdown -->
+
+        <!-- search form -->
+        <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo">
+            <div class="form-group">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control input-sm bg-light no-border rounded padder"
+                           placeholder="Search Page..." ng-change="search(searchQry)" ng-model="searchQry">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-sm bg-light rounded"><i class="fa fa-search"></i></button>
+                  </span>
+                </div>
+            </div>
+        </form>
+        <!-- / search form -->
+
+
+        <!-- navbar right -->
+        <ul class="nav navbar-nav navbar-right">
+            <li style="padding-top:15px; padding-bottom: 15px; padding-right: 10px">
+                {{structure.name}}
+            </li>
+            <li class="dropdown" dropdown>
+                <a href class="dropdown-toggle" dropdown-toggle>
+                    <i class="icon-bell fa-fw"></i>
+                    <span class="visible-xs-inline">Notifications</span>
+                    <span class="badge badge-sm up bg-danger pull-right-xs">{{user.notifications.length}}</span>
+                </a>
+                <!-- dropdown -->
+                <div class="dropdown-menu w-xl animated bounceInDown" style="  max-height: 80%; overflow: scroll; min-height: 450px;">
+                    <div class="panel bg-white">
+                        <div class="panel-heading b-light bg-light">
+                            <strong>You have <span>{{user.notifications.length}}</span> notifications</strong>
+                        </div>
+                        <div class="list-group">
+                            <a href class="media list-group-item"
+                               ng-repeat="notification in user.notifications | limitTo:8">
+                                <span class="pull-left thumb-sm">
+                                  <img src="img/a0.jpg" alt="..." class="img-circle">
+                                </span>
+                                <span class="media-body block m-b-none">
+                                  {{notification.title}}<br>
+                                  <small class="text-muted">{{notification.message}}</small>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="panel-footer text-sm">
+                            <a href class="pull-right"><i class="fa fa-cog"></i></a>
+                            <a href="#notes" data-toggle="class:show animated fadeInRight">See all the notifications</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- / dropdown -->
+            </li>
+
+            <!--User-->
+            <li class="dropdown" dropdown>
+                <a href class="dropdown-toggle clear" dropdown-toggle>
+              <span class="thumb-sm avatar pull-right m-t-n-sm m-b-n-sm m-l-sm">
+                <img src="img/a0.jpg" alt="...">
+                <i class="on md b-white bottom"></i>
+              </span>
+                    <span class="hidden-sm hidden-md">{{user.name}}</span> <b class="caret"></b>
+                </a>
+                <!-- dropdown -->
+                <ul class="dropdown-menu animated">
+                    <li class="wrapper b-b m-b-sm bg-light m-t-n-xs">
+                        <div>
+                            <p>15 of 20 bids used</p>
+                        </div>
+                        <progressbar value="75" class="progress-xs m-b-none bg-white"></progressbar>
+                    </li>
+                    <li>
+                        <a onclick="alert('Not yet implemented')">Profile</a>
+                    </li>
+                    <li>
+                        <a onclick="alert('Not yet implemented')">
+                            <span class="label bg-info pull-right">new</span>
+                            Help
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a ng-click="logOut()">Log Out</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+</div>

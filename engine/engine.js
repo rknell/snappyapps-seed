@@ -3,6 +3,7 @@
 var express = require('./lib/express');
 var mongoose = require('mongoose');
 var loader = require('./lib/loader');
+var initialise = require("./lib/initialise");
 
 /**
  * Initialise the engine.
@@ -14,6 +15,7 @@ function init() {
 
   loader.loadApi()
     .then(function (router) {
+      initialise.go();
       express.app.use(engine.config.apiPrefix, router);
       express.listen(engine.config.port);
     });
