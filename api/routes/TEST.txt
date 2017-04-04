@@ -1,1 +1,0 @@
-This file is here to ensure the tests don't break with foreign files and to achieve 100% coverage

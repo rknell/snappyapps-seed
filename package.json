@@ -1,10 +1,9 @@
 {
   "name": "snappyapps-seed",
-  "version": "0.0.1",
-  "private": true,
+  "version": "2.0.1",
+  "private": false,
   "scripts": {
     "start": "node app.js",
-    "test": "grunt test"
   },
   "dependencies": {
     "bcrypt": "^0.8.1",
@@ -25,21 +24,12 @@
     "q": "^1.1.2",
     "serve-favicon": "~2.1.3",
     "socket.io": "^1.3.5",
-    "superagent": "^0.21.0",
-    "supertest": "^0.15.0",
     "walk": "^2.3.4"
   },
   "devDependencies": {
     "chai": "^1.10.0",
-    "grunt": "^0.4.5",
-    "grunt-env": "^0.4.2",
-    "grunt-istanbul": "^0.4.0",
-    "grunt-mocha-istanbul": "^2.2.0",
-    "grunt-mocha-test": "^0.12.4",
-    "istanbul": "^0.3.4",
     "mocha": "^2.0.1",
     "mongoose-mock": "^0.4.0",
-    "rewire": "^2.1.3"
   },
   "description": "--- *Build a rapid API by simply adding files. Uses Express and Mongoose.*",
   "main": "app.js",

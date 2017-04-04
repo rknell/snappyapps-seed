@@ -1,11 +1,9 @@
 /*
-This is a simple example of defining a model, simply define the schema and enter any middleware
-in the module.exports call
+Users model, with pre-wired login, logout and forgot password calls
  */
 
 var mongoose = require('mongoose');
 var middleware = require('../middleware');
-var bCrypt = require('bcrypt');
 
 var schema = new mongoose.Schema({
   name: String,
@@ -33,12 +31,13 @@ var schema = new mongoose.Schema({
     createdAt: Date
   }],
 
-  //Avatar
-
   roles: [{
     name: String,
     value: Boolean
-  }]
+  }],
+
+  pushNotificationTokens: [String]
+
 });
 
 

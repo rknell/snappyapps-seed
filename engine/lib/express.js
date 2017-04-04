@@ -20,14 +20,17 @@ var helmet = require('helmet');
 var cors = require('cors');
 var compression = require('compression');
 
-
-
 // Initialise express
 // ------------------
 var app = express();
 
 var http = require('http').Server(app);
 io = require('socket.io')(http);
+
+// Setup static routes first,
+// so they can return without needing to hit the session store every time
+// ----------------------------------------------
+app.use(express.static(path.join(__dirname, "..", "..", "www")));
 
 // Setup default middleware
 // ------------------------
@@ -38,9 +41,10 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   rolling: true,
-  cookie: { maxAge: 6000000 },
+  cookie: {maxAge: 6000000},
   store: new MongoStore({url: process.env.DB_URI})
 }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
@@ -61,16 +65,6 @@ function listen(port, dontListen, production) {
   app.set('views', viewPath);
   app.set('view engine', 'jade');
 
-  // Setup the path to the static files
-  // ----------------------------------
-
-  if(process.env.NODE_ENV == "production"){
-    app.use(express.static(path.join(__dirname, "..", "..", "www")));
-  } else {
-    app.use(express.static(path.join(__dirname, "..", "..", "www")));
-  }
-
-
   // Fallover to a 404 if no other routes are matched
   // ------------------------------------------------
   app.use(function (req, res, next) {
@@ -86,12 +80,17 @@ function listen(port, dontListen, production) {
   //Will print a stacktrace
   console.log("Current Environment: ", app.get('env'));
   app.use(function (err, req, res, next) {
+
     if (req.get('content-type') == "application/json") {
-      var errOutput = {
-        message: err.message,
-        stack: err.stack
+      if (err) {
+        var errOutput = {
+          message: err.message,
+          stack: err.stack
+        }
+        res.status(err.status).json(errOutput)
+      } else {
+        res.status(500).json(errOutput)
       }
-      res.status(err.status).json(errOutput)
     } else {
       res.status(err.status);
       res.render('error', {
@@ -101,16 +100,14 @@ function listen(port, dontListen, production) {
     }
   });
 
-
-  //var app = require('express')();
-  io.on('connection', function(socket){
-    socket.emit('welcome', { message: 'Socket.IO connected' });
+  io.on('connection', function (socket) {
+    socket.emit('welcome', {message: 'Socket.IO connected'});
     socket.on('send', function (data) {
       io.sockets.emit('message', data);
     });
   });
 
-  http.listen(process.env.PORT || port, function(){
+  http.listen(process.env.PORT || port, function () {
     console.log('Listening on port %d', http.address().port);
   });
 

@@ -17,69 +17,71 @@
 var User = require('../models/User').model;
 var middleware = require('../middleware');
 var bCrypt = require('bcrypt');
-//var email = require("../services/email");
+var passThrough = require('../services/passThrough');
+var emailService = require('../services/email');
 
 function login(req, res) {
-  User.findOne({
-    email: req.body.email
-  })
-    .exec(function (err, doc) {
+  passThrough(function () {
+    var deferred = q.defer();
+    User.findOne({email: req.body.email})
+      .lean()
+      .exec()
+      .then(function (doc) {
+        if (doc) {
+          bCrypt.compare(req.body.password, doc.password, function (err, match) {
+            if (err) {
+              deferred.reject(err);
+            } else if (match) {
+              //doc.socket = req.session.socket;
 
-      if (doc) {
-        bCrypt.compare(req.body.password, doc.password, function (err, match) {
-          if (err) {
-            res.status(500).json(err);
-          } else if (match) {
-            doc.socket = req.session.socket;
-            res.json(doc);
-            req.session.user = doc;
-            req.session.structureId = doc._doc.structure.toString();
-            req.session.save();
-            console.log("Current structure", req.session.structureId);
-            doc.notifications.push({
-              message: "You have logged back into the site",
-              title: "Welcome Back!",
-              icon: "",
-              read: false,
-              createdAt: new Date()
-            });
-            doc.save();
-            io.to(doc.socket).emit("notification", {
-              message: "You have a new notification",
-              title: "Notification"
-            });
-          } else {
-            res.status(400).json({message: "Username or password invalid"})
-          }
-        })
-      } else if (err) {
-        res.status(500).json(err);
-      }
-    })
+              //doc.save();
+              //io.to(doc.socket).emit("notification", {
+              //  message: "You have a new notification",
+              //  title: "Notification"
+              //});
+
+              delete doc.password;
+              req.session.user = doc._id;
+              req.session.save();
+              deferred.resolve(doc);
+            } else {
+              deferred.reject({statusCode: 400, message: "Email or password invalid"});
+            }
+          })
+        } else {
+          deferred.reject({status: 400, message: "Email not found"});
+        }
+      })
+      .catch(deferred.reject);
+    return deferred.promise;
+  }, res);
+
 }
 
 function forgotPassword(req, res) {
 
-  var email = req.params.email;
+  passThrough(function () {
+    var email = req.params.email;
 
-  var token = bCrypt.hash(new Date().toString() + email, 8, function (err, hash) {
-    User.findOne({email: email})
-      .exec(function (err, doc) {
-        if (doc) {
-          delete doc.password;
-          doc.passwordToken = hash;
-          doc.save(function (err, doc) {
-            var message = "Please click here to reset your password: " + hash;
-            console.log(message);
-            //email.send(message, "rknell@snappyapps.com.au","Password Reset", "Ryan Knell", email, doc.name);
-            res.json({success: true})
-          })
-        } else {
-          res.status(404).json({message: "User not found"});
-        }
-
-      })
-  })
+    var token = bCrypt.hash(new Date().toString() + email, 8, function (err, hash) {
+      User.findOne({email: email})
+        .select('_id')
+        .exec()
+        .then(function (doc) {
+          if (doc) {
+            doc.passwordToken = new Buffer(hash.substr(0, 9)).toString('base64');
+            return doc.save()
+          } else {
+            res.status(404).json({message: "User not found"});
+          }
+        })
+        .then(function(){
+          var message = "Please click here to reset your password: " + req.protocol + '://' + req.get('host') + "/admin/#/resetPassword/" + doc.passwordToken;
+          emailService.send(message, "Reset Password Link", "rknell@snappyapps.com.au", "Ryan Knell", email);
+          deferred.resolve({success: true, message: "A reset password link has been sent to your email"});
+        })
+    })
+  }, res);
 
 }
 
@@ -215,12 +217,12 @@ function registerSocket(req, res) {
   }
 }
 
-function logOut(req, res){
+function logOut(req, res) {
   req.session.destroy();
   res.json({success: true});
 }
 
-function current(req, res){
+function current(req, res) {
   res.json(req.session.user);
 }
 

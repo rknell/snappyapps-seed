@@ -1,36 +1,39 @@
 "use strict";
-var mandrill = require('mandrill-api/mandrill');
-var mandrill_client = new mandrill.Mandrill(process.env.MANDRILL_APIKEY);
 var q = require('q');
+var sendgrid = require('sendgrid')(process.env.SENDGRID_APIKEY);
 
-function send(message, subject, fromEmail, fromName, toEmail, toName){
+function send(message, subject, fromEmail, fromName, toEmail, options) {
 
   var deferred = q.defer();
-  var message = {
-    "html": message,
-    "subject": subject,
-    "from_email": fromEmail,
-    "from_name": fromName,
-    "to": [
-      {
-        "email": toEmail,
-        "name": toName,
-        "type": "to"
-      }
-    ],
-    "auto_text": true
-  };
 
-  mandrill_client.messages.send({ "message": message, async: true }, function (result) {
-    deferred.resolve(result);
-  }, function(e){
-    deferred.reject(e);
+  var email = new sendgrid.Email();
+
+  email.addTo(toEmail);
+  email.subject = subject;
+  email.from = fromEmail;
+  email.fromname = fromName;
+  email.html = message;
+
+  if(options){
+    if(options.templateId){
+      var templateId = options.templateId;
+      email.addFilter('templates', 'enable', 1);
+      email.addFilter('templates', 'template_id', templateId);
+    }
+  }
+
+  sendgrid.send(email, function (err, json) {
+    if (err) {
+      deferred.reject(err);
+      console.error(err);
+    } else {
+      deferred.resolve(json);
+      console.log(json);
+    }
   });
 
   return deferred.promise;
 }
-
-
 
 module.exports = {
   send: send
